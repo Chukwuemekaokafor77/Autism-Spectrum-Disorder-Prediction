@@ -1,0 +1,146 @@
+<!-- app/templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASD Screening</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Autism Spectrum Disorder Screening</h1>
+        <form method="post">
+            <!-- Q-chat questions with dropdowns -->
+            <div class="form-group">
+                <label for="A1">Does your child look at you when you call his/her name?</label>
+                <select id="A1" name="A1" required>
+                    <option value="1">Always</option>
+                    <option value="0">Usually</option>
+                    <option value="0">Sometimes</option>
+                    <option value="0">Rarely</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="A2">How easy is it for you to get eye contact with your child?</label>
+                <select id="A2" name="A2" required>
+                    <option value="1">Always</option>
+                    <option value="1">Usually</option>
+                    <option value="0">Sometimes</option>
+                    <option value="0">Rarely</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="A3">Does your child point to indicate that s/he wants something? (e.g., a toy that is out of reach)</label>
+                <select id="A3" name="A3" required>
+                    <option value="1">Always</option>
+                    <option value="0">Usually</option>
+                    <option value="0">Sometimes</option>
+                    <option value="0">Rarely</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="A4">Does your child point to share interest with you? (e.g., pointing at an interesting sight)</label>
+                <select id="A4" name="A4" required>
+                    <option value="1">Always</option>
+                    <option value="1">Usually</option>
+                    <option value="0">Sometimes</option>
+                    <option value="0">Rarely</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="A5">Does your child pretend? (e.g., care for dolls, talk on a toy phone)</label>
+                <select id="A5" name="A5" required>
+                    <option value="1">Always</option>
+                    <option value="0">Usually</option>
+                    <option value="0">Sometimes</option>
+                    <option value="0">Rarely</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="A6">Does your child follow where you’re looking?</label>
+                <select id="A6" name="A6" required>
+                    <option value="1">Always</option>
+                    <option value="0">Usually</option>
+                    <option value="0">Sometimes</option>
+                    <option value="0">Rarely</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="A7">If you or someone else in the family is visibly upset, does your child show signs of wanting to comfort them? (e.g., stroking hair, hugging them)</label>
+                <select id="A7" name="A7" required>
+                    <option value="1">Always</option>
+                    <option value="0">Usually</option>
+                    <option value="0">Sometimes</option>
+                    <option value="0">Rarely</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="A8">Would you describe your child’s first words as?</label>
+                <select id="A8" name="A8" required>
+                    <option value="1">Always</option>
+                    <option value="0">Usually</option>
+                    <option value="0">Sometimes</option>
+                    <option value="0">Rarely</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="A9">Does your child use simple gestures? (e.g., wave goodbye)</label>
+                <select id="A9" name="A9" required>
+                    <option value="1">Always</option>
+                    <option value="0">Usually</option>
+                    <option value="0">Sometimes</option>
+                    <option value="0">Rarely</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="A10">Does your child stare at nothing with no apparent purpose?</label>
+                <select id="A10" name="A10" required>
+                    <option value="1">Always</option>
+                    <option value="0">Usually</option>
+                    <option value="0">Sometimes</option>
+                    <option value="0">Rarely</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Age_Mons">Age in Months</label>
+                <input type="number" id="Age_Mons" name="Age_Mons" required>
+            </div>
+            
+
+            <button type="submit">Predict</button>
+        </form>
+
+        {% if result %}
+        <div class="result">
+            <h2>Prediction: {{ result }}</h2>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Powered by Chukwuemeka Michael Okafor</p>
+    </footer>
+</body>
+</html>
