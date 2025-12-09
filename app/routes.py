@@ -43,12 +43,26 @@ def _predict_from_form(form):
 
     data_scaled = scaler.transform(data_df)
     prob = float(model.predict_proba(data_scaled)[0, 1])
-    label = 'Positive for ASD Traits' if prob >= 0.5 else 'Negative for ASD Traits'
 
-    if label.startswith('Positive'):
-        explanation = 'The model estimates a higher likelihood of ASD traits. This is not a diagnosis, but it suggests that a formal clinical evaluation may be helpful.'
+    # Three-band thresholding for clearer communication
+    if prob >= 0.7:
+        label = 'Positive for ASD Traits'
+        explanation = (
+            'The screening suggests a higher likelihood of ASD traits based on the answers provided. '
+            'This is not a diagnosis; a formal clinical evaluation with a qualified professional is strongly recommended.'
+        )
+    elif prob <= 0.3:
+        label = 'Negative for ASD Traits'
+        explanation = (
+            'The screening suggests a lower likelihood of ASD traits. This does not rule out ASD, '
+            'so please consult a clinician if you still have concerns about your child’s development.'
+        )
     else:
-        explanation = 'The model estimates a lower likelihood of ASD traits. This tool cannot replace a professional assessment, so please consult a clinician if you have concerns.'
+        label = 'Borderline / Inconclusive for ASD Traits'
+        explanation = (
+            'The screening result is inconclusive. The pattern of answers does not clearly indicate a higher or lower likelihood '
+            'of ASD traits. You may wish to repeat the questionnaire later or discuss your concerns directly with a clinician.'
+        )
 
     return label, prob, explanation
 
