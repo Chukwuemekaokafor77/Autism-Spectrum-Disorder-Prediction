@@ -45,23 +45,28 @@ def _predict_from_form(form):
     prob = float(model.predict_proba(data_scaled)[0, 1])
 
     # Three-band thresholding for clearer communication
-    if prob >= 0.7:
+    # Note: the underlying dataset is limited and model outputs should be treated as a risk score,
+    # not a clinical diagnosis.
+    if prob >= 0.9:
         label = 'Positive for ASD Traits'
         explanation = (
-            'The screening suggests a higher likelihood of ASD traits based on the answers provided. '
-            'This is not a diagnosis; a formal clinical evaluation with a qualified professional is strongly recommended.'
+            'Based on the answers provided and the underlying dataset, this screening suggests a higher indication of ASD traits. '
+            'This tool cannot provide a diagnosis. Please seek a comprehensive evaluation with a qualified healthcare professional '
+            'to discuss these results in detail.'
         )
-    elif prob <= 0.3:
+    elif prob <= 0.1:
         label = 'Negative for ASD Traits'
         explanation = (
-            'The screening suggests a lower likelihood of ASD traits. This does not rule out ASD, '
-            'so please consult a clinician if you still have concerns about your child’s development.'
+            'Based on this limited screening and dataset, the tool suggests a lower indication of ASD traits. '
+            'However, it cannot rule out ASD or other developmental conditions. If you have any ongoing concerns about your child’s '
+            'development, you should still consult a clinician.'
         )
     else:
         label = 'Borderline / Inconclusive for ASD Traits'
         explanation = (
-            'The screening result is inconclusive. The pattern of answers does not clearly indicate a higher or lower likelihood '
-            'of ASD traits. You may wish to repeat the questionnaire later or discuss your concerns directly with a clinician.'
+            'The screening result is inconclusive. The pattern of answers does not clearly fall into a higher- or lower-indication band '
+            'for ASD traits. Because this tool is based on a specific research dataset and is not a diagnostic instrument, '
+            'you may wish to repeat the questionnaire later and/or discuss your concerns directly with a qualified professional.'
         )
 
     return label, prob, explanation
