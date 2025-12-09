@@ -85,7 +85,7 @@ def build_pipeline(df: pd.DataFrame):
         ]
     )
 
-    clf = LogisticRegression(max_iter=1000)
+    clf = LogisticRegression(max_iter=1000, class_weight="balanced")
 
     pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("clf", clf)])
 
