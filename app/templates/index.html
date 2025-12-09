@@ -9,131 +9,191 @@
 </head>
 <body>
     <div class="container">
-        <h1>Autism Spectrum Disorder Screening</h1>
-        <form method="post">
+        <header class="header">
+            <h1>Autism Spectrum Disorder Screening</h1>
+            <p class="subtitle">A short, research-based questionnaire to estimate the likelihood of ASD traits in toddlers. This tool is <strong>not</strong> a diagnosis and does not replace a clinical assessment.</p>
+        </header>
+
+        <form method="post" class="screening-form">
+            <h2 class="section-title">Child Information</h2>
+
+            <div class="form-group">
+                <label for="Age_Mons">Age in Months</label>
+                <input type="number" id="Age_Mons" name="Age_Mons" min="0" step="1" value="{{ form_data.Age_Mons if form_data else '' }}" required>
+                {% if errors and errors.get('Age_Mons') %}
+                    <p class="field-error">{{ errors.get('Age_Mons') }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="Sex">Sex</label>
+                <select id="Sex" name="Sex" required>
+                    <option value="m" {% if form_data and form_data.get('Sex') == 'm' %}selected{% endif %}>Male</option>
+                    <option value="f" {% if form_data and form_data.get('Sex') == 'f' %}selected{% endif %}>Female</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Ethnicity">Ethnicity</label>
+                <select id="Ethnicity" name="Ethnicity" required>
+                    <option value="middle eastern" {% if form_data and form_data.get('Ethnicity') == 'middle eastern' %}selected{% endif %}>Middle Eastern</option>
+                    <option value="White European" {% if form_data and form_data.get('Ethnicity') == 'White European' %}selected{% endif %}>White European</option>
+                    <option value="Hispanic" {% if form_data and form_data.get('Ethnicity') == 'Hispanic' %}selected{% endif %}>Hispanic</option>
+                    <option value="black" {% if form_data and form_data.get('Ethnicity') == 'black' %}selected{% endif %}>Black</option>
+                    <option value="asian" {% if form_data and form_data.get('Ethnicity') == 'asian' %}selected{% endif %}>Asian</option>
+                    <option value="south asian" {% if form_data and form_data.get('Ethnicity') == 'south asian' %}selected{% endif %}>South Asian</option>
+                    <option value="Native Indian" {% if form_data and form_data.get('Ethnicity') == 'Native Indian' %}selected{% endif %}>Native Indian</option>
+                    <option value="Others" {% if form_data and form_data.get('Ethnicity') == 'Others' %}selected{% endif %}>Others</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Jaundice">History of Jaundice</label>
+                <select id="Jaundice" name="Jaundice" required>
+                    <option value="no" {% if form_data and form_data.get('Jaundice') == 'no' %}selected{% endif %}>No</option>
+                    <option value="yes" {% if form_data and form_data.get('Jaundice') == 'yes' %}selected{% endif %}>Yes</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Family_mem_with_ASD">Family member with ASD</label>
+                <select id="Family_mem_with_ASD" name="Family_mem_with_ASD" required>
+                    <option value="no" {% if form_data and form_data.get('Family_mem_with_ASD') == 'no' %}selected{% endif %}>No</option>
+                    <option value="yes" {% if form_data and form_data.get('Family_mem_with_ASD') == 'yes' %}selected{% endif %}>Yes</option>
+                </select>
+            </div>
+
+            <h2 class="section-title">Behavioral Questions (Q-CHAT-10)</h2>
             <!-- Q-chat questions with dropdowns -->
             <div class="form-group">
                 <label for="A1">Does your child look at you when you call his/her name?</label>
                 <select id="A1" name="A1" required>
-                    <option value="1">Always</option>
-                    <option value="0">Usually</option>
-                    <option value="0">Sometimes</option>
-                    <option value="0">Rarely</option>
-                    <option value="0">Never</option>
+                    <option value="1" {% if not form_data or form_data.get('A1') == '1' %}selected{% endif %}>Always</option>
+                    <option value="0" {% if form_data and form_data.get('A1') == '0' %}selected{% endif %}>Usually</option>
+                    <option value="0" {% if form_data and form_data.get('A1') == '0' %}selected{% endif %}>Sometimes</option>
+                    <option value="0" {% if form_data and form_data.get('A1') == '0' %}selected{% endif %}>Rarely</option>
+                    <option value="0" {% if form_data and form_data.get('A1') == '0' %}selected{% endif %}>Never</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="A2">How easy is it for you to get eye contact with your child?</label>
                 <select id="A2" name="A2" required>
-                    <option value="1">Always</option>
-                    <option value="1">Usually</option>
-                    <option value="0">Sometimes</option>
-                    <option value="0">Rarely</option>
-                    <option value="0">Never</option>
+                    <option value="1" {% if not form_data or form_data.get('A2') == '1' %}selected{% endif %}>Always</option>
+                    <option value="1" {% if form_data and form_data.get('A2') == '1' %}selected{% endif %}>Usually</option>
+                    <option value="0" {% if form_data and form_data.get('A2') == '0' %}selected{% endif %}>Sometimes</option>
+                    <option value="0" {% if form_data and form_data.get('A2') == '0' %}selected{% endif %}>Rarely</option>
+                    <option value="0" {% if form_data and form_data.get('A2') == '0' %}selected{% endif %}>Never</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="A3">Does your child point to indicate that s/he wants something? (e.g., a toy that is out of reach)</label>
                 <select id="A3" name="A3" required>
-                    <option value="1">Always</option>
-                    <option value="0">Usually</option>
-                    <option value="0">Sometimes</option>
-                    <option value="0">Rarely</option>
-                    <option value="0">Never</option>
+                    <option value="1" {% if not form_data or form_data.get('A3') == '1' %}selected{% endif %}>Always</option>
+                    <option value="0" {% if form_data and form_data.get('A3') == '0' %}selected{% endif %}>Usually</option>
+                    <option value="0" {% if form_data and form_data.get('A3') == '0' %}selected{% endif %}>Sometimes</option>
+                    <option value="0" {% if form_data and form_data.get('A3') == '0' %}selected{% endif %}>Rarely</option>
+                    <option value="0" {% if form_data and form_data.get('A3') == '0' %}selected{% endif %}>Never</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="A4">Does your child point to share interest with you? (e.g., pointing at an interesting sight)</label>
                 <select id="A4" name="A4" required>
-                    <option value="1">Always</option>
-                    <option value="1">Usually</option>
-                    <option value="0">Sometimes</option>
-                    <option value="0">Rarely</option>
-                    <option value="0">Never</option>
+                    <option value="1" {% if not form_data or form_data.get('A4') == '1' %}selected{% endif %}>Always</option>
+                    <option value="1" {% if form_data and form_data.get('A4') == '1' %}selected{% endif %}>Usually</option>
+                    <option value="0" {% if form_data and form_data.get('A4') == '0' %}selected{% endif %}>Sometimes</option>
+                    <option value="0" {% if form_data and form_data.get('A4') == '0' %}selected{% endif %}>Rarely</option>
+                    <option value="0" {% if form_data and form_data.get('A4') == '0' %}selected{% endif %}>Never</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="A5">Does your child pretend? (e.g., care for dolls, talk on a toy phone)</label>
                 <select id="A5" name="A5" required>
-                    <option value="1">Always</option>
-                    <option value="0">Usually</option>
-                    <option value="0">Sometimes</option>
-                    <option value="0">Rarely</option>
-                    <option value="0">Never</option>
+                    <option value="1" {% if not form_data or form_data.get('A5') == '1' %}selected{% endif %}>Always</option>
+                    <option value="0" {% if form_data and form_data.get('A5') == '0' %}selected{% endif %}>Usually</option>
+                    <option value="0" {% if form_data and form_data.get('A5') == '0' %}selected{% endif %}>Sometimes</option>
+                    <option value="0" {% if form_data and form_data.get('A5') == '0' %}selected{% endif %}>Rarely</option>
+                    <option value="0" {% if form_data and form_data.get('A5') == '0' %}selected{% endif %}>Never</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="A6">Does your child follow where you’re looking?</label>
                 <select id="A6" name="A6" required>
-                    <option value="1">Always</option>
-                    <option value="0">Usually</option>
-                    <option value="0">Sometimes</option>
-                    <option value="0">Rarely</option>
-                    <option value="0">Never</option>
+                    <option value="1" {% if not form_data or form_data.get('A6') == '1' %}selected{% endif %}>Always</option>
+                    <option value="0" {% if form_data and form_data.get('A6') == '0' %}selected{% endif %}>Usually</option>
+                    <option value="0" {% if form_data and form_data.get('A6') == '0' %}selected{% endif %}>Sometimes</option>
+                    <option value="0" {% if form_data and form_data.get('A6') == '0' %}selected{% endif %}>Rarely</option>
+                    <option value="0" {% if form_data and form_data.get('A6') == '0' %}selected{% endif %}>Never</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="A7">If you or someone else in the family is visibly upset, does your child show signs of wanting to comfort them? (e.g., stroking hair, hugging them)</label>
                 <select id="A7" name="A7" required>
-                    <option value="1">Always</option>
-                    <option value="0">Usually</option>
-                    <option value="0">Sometimes</option>
-                    <option value="0">Rarely</option>
-                    <option value="0">Never</option>
+                    <option value="1" {% if not form_data or form_data.get('A7') == '1' %}selected{% endif %}>Always</option>
+                    <option value="0" {% if form_data and form_data.get('A7') == '0' %}selected{% endif %}>Usually</option>
+                    <option value="0" {% if form_data and form_data.get('A7') == '0' %}selected{% endif %}>Sometimes</option>
+                    <option value="0" {% if form_data and form_data.get('A7') == '0' %}selected{% endif %}>Rarely</option>
+                    <option value="0" {% if form_data and form_data.get('A7') == '0' %}selected{% endif %}>Never</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="A8">Would you describe your child’s first words as?</label>
                 <select id="A8" name="A8" required>
-                    <option value="1">Always</option>
-                    <option value="0">Usually</option>
-                    <option value="0">Sometimes</option>
-                    <option value="0">Rarely</option>
-                    <option value="0">Never</option>
+                    <option value="1" {% if not form_data or form_data.get('A8') == '1' %}selected{% endif %}>Always</option>
+                    <option value="0" {% if form_data and form_data.get('A8') == '0' %}selected{% endif %}>Usually</option>
+                    <option value="0" {% if form_data and form_data.get('A8') == '0' %}selected{% endif %}>Sometimes</option>
+                    <option value="0" {% if form_data and form_data.get('A8') == '0' %}selected{% endif %}>Rarely</option>
+                    <option value="0" {% if form_data and form_data.get('A8') == '0' %}selected{% endif %}>Never</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="A9">Does your child use simple gestures? (e.g., wave goodbye)</label>
                 <select id="A9" name="A9" required>
-                    <option value="1">Always</option>
-                    <option value="0">Usually</option>
-                    <option value="0">Sometimes</option>
-                    <option value="0">Rarely</option>
-                    <option value="0">Never</option>
+                    <option value="1" {% if not form_data or form_data.get('A9') == '1' %}selected{% endif %}>Always</option>
+                    <option value="0" {% if form_data and form_data.get('A9') == '0' %}selected{% endif %}>Usually</option>
+                    <option value="0" {% if form_data and form_data.get('A9') == '0' %}selected{% endif %}>Sometimes</option>
+                    <option value="0" {% if form_data and form_data.get('A9') == '0' %}selected{% endif %}>Rarely</option>
+                    <option value="0" {% if form_data and form_data.get('A9') == '0' %}selected{% endif %}>Never</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="A10">Does your child stare at nothing with no apparent purpose?</label>
                 <select id="A10" name="A10" required>
-                    <option value="1">Always</option>
-                    <option value="0">Usually</option>
-                    <option value="0">Sometimes</option>
-                    <option value="0">Rarely</option>
-                    <option value="0">Never</option>
+                    <option value="1" {% if not form_data or form_data.get('A10') == '1' %}selected{% endif %}>Always</option>
+                    <option value="0" {% if form_data and form_data.get('A10') == '0' %}selected{% endif %}>Usually</option>
+                    <option value="0" {% if form_data and form_data.get('A10') == '0' %}selected{% endif %}>Sometimes</option>
+                    <option value="0" {% if form_data and form_data.get('A10') == '0' %}selected{% endif %}>Rarely</option>
+                    <option value="0" {% if form_data and form_data.get('A10') == '0' %}selected{% endif %}>Never</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="Age_Mons">Age in Months</label>
-                <input type="number" id="Age_Mons" name="Age_Mons" required>
-            </div>
-            
-
-            <button type="submit">Predict</button>
+            <button type="submit">View Screening Result</button>
         </form>
 
         {% if result %}
-        <div class="result">
-            <h2>Prediction: {{ result }}</h2>
+        {% set result_class = 'result-negative' if 'Negative' in result else 'result-positive' %}
+        <div class="result {{ result_class }}">
+            <h2>Screening Result</h2>
+            <p class="result-label">{{ result }}</p>
+            {% if probability is defined %}
+                <p class="result-probability">Estimated probability of ASD traits: <strong>{{ (probability * 100) | round(1) }}%</strong></p>
+            {% endif %}
+            {% if explanation %}
+                <p class="result-explanation">{{ explanation }}</p>
+            {% endif %}
+            <div class="about-model">
+                <h3>About this model</h3>
+                <p>This screening tool uses a logistic regression model trained on a published toddler ASD screening dataset. It is intended for educational and support purposes only.</p>
+                <p>Evaluation plots (confusion matrix and ROC curve) are generated by the training script and saved in the <code>model/</code> folder as <code>confusion_matrix.png</code> and <code>roc_curve.png</code>.</p>
+            </div>
         </div>
         {% endif %}
     </div>

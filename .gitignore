@@ -1,1 +1,47 @@
+# --- Virtual environments ---
 venv/
+venv*/        # e.g. venv311
+env/
+
+# --- Python caches / build ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+
+# --- Model artifacts & outputs ---
+# Trained models / scalers / feature metadata
+model/*.pkl
+model/*.joblib
+model/*.h5
+
+# Evaluation plots
+model/*.png
+
+# If you ever store notebooks' outputs or exports here:
+model/*.csv
+model/*.json
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Logs ---
+*.log
+logs/
+*.tmp
+
+# --- IDE / editor / OS ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Environment / secrets (if added later) ---
+.env
+.env.*

@@ -1,58 +1,96 @@
-import pandas as pd
-import joblib
+import logging
 import os
 
-# app/routes.py
+import joblib
+import pandas as pd
 from flask import Blueprint, render_template, request
-from .model import model, scaler  # Ensure scaler is loaded if needed
+from .model import model, scaler
 
-# Load the feature names used during training
-feature_names_path = os.path.join(os.getcwd(), 'model', 'feature_names.pkl')
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+MODEL_DIR = os.path.join(BASE_DIR, 'model')
+
+feature_names_path = os.path.join(MODEL_DIR, 'feature_names.pkl')
 model_columns = joblib.load(feature_names_path)
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 main = Blueprint('main', __name__)
+
+
+def _predict_from_form(form):
+    data = {
+        'A1': float(form.get('A1', 0)),
+        'A2': float(form.get('A2', 0)),
+        'A3': float(form.get('A3', 0)),
+        'A4': float(form.get('A4', 0)),
+        'A5': float(form.get('A5', 0)),
+        'A6': float(form.get('A6', 0)),
+        'A7': float(form.get('A7', 0)),
+        'A8': float(form.get('A8', 0)),
+        'A9': float(form.get('A9', 0)),
+        'A10': float(form.get('A10', 0)),
+        'Age_Mons': float(form.get('Age_Mons', 0)),
+        'Sex': form.get('Sex', '0'),
+        'Ethnicity': form.get('Ethnicity', 'Others'),
+        'Jaundice': form.get('Jaundice', '0'),
+        'Family_mem_with_ASD': form.get('Family_mem_with_ASD', '0')
+    }
+
+    data_df = pd.DataFrame([data])
+    data_df = pd.get_dummies(data_df)
+    data_df = data_df.reindex(columns=model_columns, fill_value=0)
+
+    data_scaled = scaler.transform(data_df)
+    prob = float(model.predict_proba(data_scaled)[0, 1])
+    label = 'Positive for ASD Traits' if prob >= 0.5 else 'Negative for ASD Traits'
+
+    if label.startswith('Positive'):
+        explanation = 'The model estimates a higher likelihood of ASD traits. This is not a diagnosis, but it suggests that a formal clinical evaluation may be helpful.'
+    else:
+        explanation = 'The model estimates a lower likelihood of ASD traits. This tool cannot replace a professional assessment, so please consult a clinician if you have concerns.'
+
+    return label, prob, explanation
+
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
+        errors = {}
+
+        # Basic validation for Age_Mons
+        age_raw = request.form.get('Age_Mons')
         try:
-            # Map the form inputs to variables corresponding to the updated form fields
-            data = {
-                'A1': float(request.form.get('A1', 0)),
-                'A2': float(request.form.get('A2', 0)),
-                'A3': float(request.form.get('A3', 0)),
-                'A4': float(request.form.get('A4', 0)),
-                'A5': float(request.form.get('A5', 0)),
-                'A6': float(request.form.get('A6', 0)),
-                'A7': float(request.form.get('A7', 0)),
-                'A8': float(request.form.get('A8', 0)),
-                'A9': float(request.form.get('A9', 0)),
-                'A10': float(request.form.get('A10', 0)),
-                'Age_Mons': float(request.form.get('Age_Mons', 0)),
-                'Sex': request.form.get('Sex', '0'),
-                'Ethnicity': request.form.get('Ethnicity', 'Others'),
-                'Jaundice': request.form.get('Jaundice', '0'),
-                'Family_mem_with_ASD': request.form.get('Family_mem_with_ASD', '0')
-            }
+            if age_raw is None or age_raw == '':
+                raise ValueError('missing')
+            age_val = float(age_raw)
+            if age_val < 0:
+                errors['Age_Mons'] = 'Please enter an age greater than or equal to 0.'
+        except ValueError:
+            if 'Age_Mons' not in errors:
+                errors['Age_Mons'] = 'Please enter a valid age in months.'
 
-            # Convert the input data to a DataFrame
-            data_df = pd.DataFrame([data])
+        if errors:
+            return render_template('index.html', result=None, probability=None, explanation=None, form_data=request.form, errors=errors)
 
-            # One-hot encode the categorical features to match the training phase
-            data_df = pd.get_dummies(data_df)
-
-            # Align the DataFrame to ensure all feature columns match those during training
-            data_df = data_df.reindex(columns=model_columns, fill_value=0)
-
-            # Scale the input data
-            data_scaled = scaler.transform(data_df)
-
-            # Make prediction
-            prediction = model.predict(data_scaled)[0]
-            result = 'Positive for ASD Traits' if prediction == 1 else 'Negative for ASD Traits'
-            
-            return render_template('index.html', result=result)
+        try:
+            label, prob, explanation = _predict_from_form(request.form)
+            logger.info('Prediction made')
+            return render_template('index.html', result=label, probability=prob, explanation=explanation, form_data=request.form, errors=None)
         except Exception as e:
-            return render_template('index.html', result=f"An error occurred: {e}")
-    
-    return render_template('index.html')
+            logger.exception('Error during prediction')
+            friendly_error = 'We could not complete the prediction. Please check your inputs and try again. If the problem continues, please try again later.'
+            return render_template('index.html', result=friendly_error, probability=None, explanation=None, form_data=request.form, errors=None)
+
+    return render_template('index.html', form_data=None, errors=None)
+
+
+@main.route('/health', methods=['GET'])
+def health():
+    try:
+        _ = model
+        _ = scaler
+        _ = model_columns
+        return 'OK', 200
+    except Exception:
+        return 'NOT_OK', 500

@@ -76,6 +76,30 @@ Cross-Validation: The model was evaluated using 5-fold cross-validation, achievi
 
 Feature Engineering: Categorical variables were one-hot encoded, and the data was standardized before training.
 
+### Retraining the Model
+
+The repository includes a `train.py` script that reproducibly trains the ASD screening model using the toddler autism dataset in the `data/` folder.
+
+- **Features used for training and inference** (aligned with the web form):
+  - Behavioral questions: `A1`–`A10`
+  - Demographics: `Age_Mons`, `Sex`, `Ethnicity`, `Jaundice`, `Family_mem_with_ASD`
+- **Target**: `Class/ASD Traits ` ("Yes" / "No"), mapped to 1/0.
+
+To retrain and regenerate the artifacts (`model.pkl`, `scaler.pkl`, `feature_names.pkl`, and evaluation plots):
+
+1. Create and activate a virtual environment.
+2. Install dependencies: `pip install -r requirements.txt`
+3. Run the training script from the project root:
+   ```bash
+   python train.py
+   ```
+
+This will:
+- Split the data into train/test sets.
+- Train a logistic regression model with appropriate preprocessing.
+- Print validation metrics (accuracy, confusion matrix, classification report, ROC AUC).
+- Save the trained model, scaler, feature names, and plots (`confusion_matrix.png`, `roc_curve.png`) into the `model/` directory.
+
 Deployment
 The application has been containerized using Docker for easy deployment across different environments. The dockerfile includes all necessary steps to build and run the application in a containerized environment.
 
