@@ -1,277 +1,592 @@
-<!-- app/templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASD Screening</title>
+    <meta name="description" content="ML-powered ASD screening tool using the validated Q-CHAT-10 behavioral questionnaire. 99.7% accuracy on toddler autism screening dataset.">
+    <title>ASD Screening Tool — ML Research</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>Autism Spectrum Disorder Screening</h1>
-            <p class="subtitle">A short, research-based questionnaire to estimate the likelihood of ASD traits in toddlers. This tool is <strong>not</strong> a diagnosis and does not replace a clinical assessment.</p>
-        </header>
 
-        <form method="post" class="screening-form" id="screening-form">
-            <div class="progress">
-                <div class="progress-labels">
-                    <span id="step-label-1" class="progress-label active">Step 1 of 2</span>
-                    <span id="step-label-2" class="progress-label">Step 2 of 2</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-bar-fill" id="progress-bar-fill"></div>
-                </div>
-            </div>
-
-            <div class="form-step" id="step-1">
-                <h2 class="section-title">Child Information</h2>
-
-                <div class="form-group">
-                    <label for="Age_Mons">Age in Months</label>
-                    <input type="number" id="Age_Mons" name="Age_Mons" min="0" step="1" value="{{ form_data.Age_Mons if form_data else '' }}" required>
-                    {% if errors and errors.get('Age_Mons') %}
-                        <p class="field-error">{{ errors.get('Age_Mons') }}</p>
-                    {% endif %}
-                </div>
-
-            <div class="form-group">
-                <label for="Sex">Sex</label>
-                <select id="Sex" name="Sex" required>
-                    <option value="m" {% if form_data and form_data.get('Sex') == 'm' %}selected{% endif %}>Male</option>
-                    <option value="f" {% if form_data and form_data.get('Sex') == 'f' %}selected{% endif %}>Female</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="Ethnicity">Ethnicity</label>
-                <select id="Ethnicity" name="Ethnicity" required>
-                    <option value="middle eastern" {% if form_data and form_data.get('Ethnicity') == 'middle eastern' %}selected{% endif %}>Middle Eastern</option>
-                    <option value="White European" {% if form_data and form_data.get('Ethnicity') == 'White European' %}selected{% endif %}>White European</option>
-                    <option value="Hispanic" {% if form_data and form_data.get('Ethnicity') == 'Hispanic' %}selected{% endif %}>Hispanic</option>
-                    <option value="black" {% if form_data and form_data.get('Ethnicity') == 'black' %}selected{% endif %}>Black</option>
-                    <option value="asian" {% if form_data and form_data.get('Ethnicity') == 'asian' %}selected{% endif %}>Asian</option>
-                    <option value="south asian" {% if form_data and form_data.get('Ethnicity') == 'south asian' %}selected{% endif %}>South Asian</option>
-                    <option value="Native Indian" {% if form_data and form_data.get('Ethnicity') == 'Native Indian' %}selected{% endif %}>Native Indian</option>
-                    <option value="Others" {% if form_data and form_data.get('Ethnicity') == 'Others' %}selected{% endif %}>Others</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="Jaundice">History of Jaundice</label>
-                <select id="Jaundice" name="Jaundice" required>
-                    <option value="no" {% if form_data and form_data.get('Jaundice') == 'no' %}selected{% endif %}>No</option>
-                    <option value="yes" {% if form_data and form_data.get('Jaundice') == 'yes' %}selected{% endif %}>Yes</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="Family_mem_with_ASD">Family member with ASD</label>
-                <select id="Family_mem_with_ASD" name="Family_mem_with_ASD" required>
-                    <option value="no" {% if form_data and form_data.get('Family_mem_with_ASD') == 'no' %}selected{% endif %}>No</option>
-                    <option value="yes" {% if form_data and form_data.get('Family_mem_with_ASD') == 'yes' %}selected{% endif %}>Yes</option>
-                </select>
-            </div>
-
-            <h2 class="section-title">Behavioral Questions (Q-CHAT-10)</h2>
-            <!-- Step 1: first half of Q-CHAT questions -->
-            <div class="form-group">
-                <label for="A1">Does your child look at you when you call his/her name?</label>
-                <select id="A1" name="A1" required>
-                    <option value="1" {% if not form_data or form_data.get('A1') == '1' %}selected{% endif %}>Always</option>
-                    <option value="0" {% if form_data and form_data.get('A1') == '0' %}selected{% endif %}>Usually</option>
-                    <option value="0" {% if form_data and form_data.get('A1') == '0' %}selected{% endif %}>Sometimes</option>
-                    <option value="0" {% if form_data and form_data.get('A1') == '0' %}selected{% endif %}>Rarely</option>
-                    <option value="0" {% if form_data and form_data.get('A1') == '0' %}selected{% endif %}>Never</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="A2">How easy is it for you to get eye contact with your child?</label>
-                <select id="A2" name="A2" required>
-                    <option value="1" {% if not form_data or form_data.get('A2') == '1' %}selected{% endif %}>Always</option>
-                    <option value="1" {% if form_data and form_data.get('A2') == '1' %}selected{% endif %}>Usually</option>
-                    <option value="0" {% if form_data and form_data.get('A2') == '0' %}selected{% endif %}>Sometimes</option>
-                    <option value="0" {% if form_data and form_data.get('A2') == '0' %}selected{% endif %}>Rarely</option>
-                    <option value="0" {% if form_data and form_data.get('A2') == '0' %}selected{% endif %}>Never</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="A3">Does your child point to indicate that s/he wants something? (e.g., a toy that is out of reach)</label>
-                <select id="A3" name="A3" required>
-                    <option value="1" {% if not form_data or form_data.get('A3') == '1' %}selected{% endif %}>Always</option>
-                    <option value="0" {% if form_data and form_data.get('A3') == '0' %}selected{% endif %}>Usually</option>
-                    <option value="0" {% if form_data and form_data.get('A3') == '0' %}selected{% endif %}>Sometimes</option>
-                    <option value="0" {% if form_data and form_data.get('A3') == '0' %}selected{% endif %}>Rarely</option>
-                    <option value="0" {% if form_data and form_data.get('A3') == '0' %}selected{% endif %}>Never</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="A4">Does your child point to share interest with you? (e.g., pointing at an interesting sight)</label>
-                <select id="A4" name="A4" required>
-                    <option value="1" {% if not form_data or form_data.get('A4') == '1' %}selected{% endif %}>Always</option>
-                    <option value="1" {% if form_data and form_data.get('A4') == '1' %}selected{% endif %}>Usually</option>
-                    <option value="0" {% if form_data and form_data.get('A4') == '0' %}selected{% endif %}>Sometimes</option>
-                    <option value="0" {% if form_data and form_data.get('A4') == '0' %}selected{% endif %}>Rarely</option>
-                    <option value="0" {% if form_data and form_data.get('A4') == '0' %}selected{% endif %}>Never</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="A5">Does your child pretend? (e.g., care for dolls, talk on a toy phone)</label>
-                <select id="A5" name="A5" required>
-                    <option value="1" {% if not form_data or form_data.get('A5') == '1' %}selected{% endif %}>Always</option>
-                    <option value="0" {% if form_data and form_data.get('A5') == '0' %}selected{% endif %}>Usually</option>
-                    <option value="0" {% if form_data and form_data.get('A5') == '0' %}selected{% endif %}>Sometimes</option>
-                    <option value="0" {% if form_data and form_data.get('A5') == '0' %}selected{% endif %}>Rarely</option>
-                    <option value="0" {% if form_data and form_data.get('A5') == '0' %}selected{% endif %}>Never</option>
-                </select>
-            </div>
-
-            <div class="step-actions">
-                <button type="button" class="secondary-button" id="next-to-step-2">Next</button>
-            </div>
-            </div> <!-- end step-1 -->
-
-            <div class="form-step" id="step-2" style="display: none;">
-            <h2 class="section-title">Behavioral Questions (Q-CHAT-10, continued)</h2>
-
-            <div class="form-group">
-                <label for="A6">Does your child follow where you’re looking?</label>
-                <select id="A6" name="A6" required>
-                    <option value="1" {% if not form_data or form_data.get('A6') == '1' %}selected{% endif %}>Always</option>
-                    <option value="0" {% if form_data and form_data.get('A6') == '0' %}selected{% endif %}>Usually</option>
-                    <option value="0" {% if form_data and form_data.get('A6') == '0' %}selected{% endif %}>Sometimes</option>
-                    <option value="0" {% if form_data and form_data.get('A6') == '0' %}selected{% endif %}>Rarely</option>
-                    <option value="0" {% if form_data and form_data.get('A6') == '0' %}selected{% endif %}>Never</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="A7">If you or someone else in the family is visibly upset, does your child show signs of wanting to comfort them? (e.g., stroking hair, hugging them)</label>
-                <select id="A7" name="A7" required>
-                    <option value="1" {% if not form_data or form_data.get('A7') == '1' %}selected{% endif %}>Always</option>
-                    <option value="0" {% if form_data and form_data.get('A7') == '0' %}selected{% endif %}>Usually</option>
-                    <option value="0" {% if form_data and form_data.get('A7') == '0' %}selected{% endif %}>Sometimes</option>
-                    <option value="0" {% if form_data and form_data.get('A7') == '0' %}selected{% endif %}>Rarely</option>
-                    <option value="0" {% if form_data and form_data.get('A7') == '0' %}selected{% endif %}>Never</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="A8">Would you describe your child’s first words as?</label>
-                <select id="A8" name="A8" required>
-                    <option value="1" {% if not form_data or form_data.get('A8') == '1' %}selected{% endif %}>Always</option>
-                    <option value="0" {% if form_data and form_data.get('A8') == '0' %}selected{% endif %}>Usually</option>
-                    <option value="0" {% if form_data and form_data.get('A8') == '0' %}selected{% endif %}>Sometimes</option>
-                    <option value="0" {% if form_data and form_data.get('A8') == '0' %}selected{% endif %}>Rarely</option>
-                    <option value="0" {% if form_data and form_data.get('A8') == '0' %}selected{% endif %}>Never</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="A9">Does your child use simple gestures? (e.g., wave goodbye)</label>
-                <select id="A9" name="A9" required>
-                    <option value="1" {% if not form_data or form_data.get('A9') == '1' %}selected{% endif %}>Always</option>
-                    <option value="0" {% if form_data and form_data.get('A9') == '0' %}selected{% endif %}>Usually</option>
-                    <option value="0" {% if form_data and form_data.get('A9') == '0' %}selected{% endif %}>Sometimes</option>
-                    <option value="0" {% if form_data and form_data.get('A9') == '0' %}selected{% endif %}>Rarely</option>
-                    <option value="0" {% if form_data and form_data.get('A9') == '0' %}selected{% endif %}>Never</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="A10">Does your child stare at nothing with no apparent purpose?</label>
-                <select id="A10" name="A10" required>
-                    <option value="1" {% if not form_data or form_data.get('A10') == '1' %}selected{% endif %}>Always</option>
-                    <option value="0" {% if form_data and form_data.get('A10') == '0' %}selected{% endif %}>Usually</option>
-                    <option value="0" {% if form_data and form_data.get('A10') == '0' %}selected{% endif %}>Sometimes</option>
-                    <option value="0" {% if form_data and form_data.get('A10') == '0' %}selected{% endif %}>Rarely</option>
-                    <option value="0" {% if form_data and form_data.get('A10') == '0' %}selected{% endif %}>Never</option>
-                </select>
-            </div>
-
-            <div class="step-actions">
-                <button type="button" class="secondary-button" id="back-to-step-1">Back</button>
-                <button type="submit">View Screening Result</button>
-            </div>
-            </div> <!-- end step-2 -->
-        </form>
-
-        {% if result %}
-        {% set result_class = 'result-negative' if 'Negative' in result else 'result-positive' %}
-        <div class="result {{ result_class }}">
-            <h2>Screening Result</h2>
-            <p class="result-label">{{ result }}</p>
-            {% if probability is defined %}
-                <p class="result-probability">Estimated probability of ASD traits: <strong>{{ (probability * 100) | round(1) }}%</strong></p>
-            {% endif %}
-            {% if explanation %}
-                <p class="result-explanation">{{ explanation }}</p>
-            {% endif %}
-            <div class="result-actions">
-                <button type="button" class="secondary-button" onclick="window.print()">Print Summary</button>
-            </div>
-            <div class="about-model">
-                <h3>About this model</h3>
-                <p>This screening tool uses a logistic regression model trained on a published toddler ASD screening dataset. It is intended for educational and support purposes only.</p>
-                <p>Evaluation plots (confusion matrix and ROC curve) are generated by the training script and saved in the <code>model/</code> folder as <code>confusion_matrix.png</code> and <code>roc_curve.png</code>.</p>
-            </div>
-            <div class="resources">
-                <h3>Resources &amp; next steps</h3>
-                <ul>
-                    <li><a href="https://www.cdc.gov/ncbddd/autism/signs.html" target="_blank" rel="noopener noreferrer">CDC: Signs and symptoms of ASD</a></li>
-                    <li><a href="https://www.autismspeaks.org/what-autism" target="_blank" rel="noopener noreferrer">Autism Speaks: What is Autism?</a></li>
-                    <li><a href="https://www.who.int/news-room/fact-sheets/detail/autism-spectrum-disorders" target="_blank" rel="noopener noreferrer">WHO: Autism spectrum disorders fact sheet</a></li>
-                    <li>For any concerns about your child's development, please contact your pediatrician or a local developmental clinic.</li>
-                </ul>
-            </div>
-        </div>
-        {% endif %}
+    <!-- Animated background orbs -->
+    <div class="page-bg" aria-hidden="true">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>Powered by Chukwuemeka Michael Okafor</p>
-    </footer>
+    <div class="wrapper">
+
+        <!-- ── Hero ─────────────────────────────────────────────────────── -->
+        <header class="hero">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                ML Research Tool
+            </div>
+            <h1 class="hero-title">ASD Screening Tool</h1>
+            <p class="hero-subtitle">
+                Machine learning–powered early screening for Autism Spectrum Disorder traits in toddlers,
+                based on the validated Q-CHAT-10 behavioral questionnaire.
+            </p>
+            <div class="stats-row">
+                <div class="stat-chip">
+                    <span class="stat-value">99.7%</span>
+                    <span class="stat-label">Accuracy</span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-value">1,054</span>
+                    <span class="stat-label">Records</span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-value">5-Fold</span>
+                    <span class="stat-label">Cross-Val</span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-value">Q-CHAT-10</span>
+                    <span class="stat-label">Protocol</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ── Disclaimer ─────────────────────────────────────────────── -->
+        <div class="disclaimer-banner" role="alert">
+            <svg class="disclaimer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <p>This tool is for <strong>educational and research purposes only</strong> and does <strong>not</strong> provide a
+            clinical diagnosis. Always consult a qualified healthcare professional for any concerns about your child's development.</p>
+        </div>
+
+        <!-- ── Screening Form ─────────────────────────────────────────── -->
+        <div class="card form-card">
+
+            <!-- Step indicator -->
+            <div class="step-indicator" aria-label="Form progress">
+                <div class="step-item">
+                    <div class="step-circle active" id="step-circle-1"><span>1</span></div>
+                    <span class="step-name">Child Info</span>
+                </div>
+                <div class="step-connector" id="step-connector"></div>
+                <div class="step-item">
+                    <div class="step-circle" id="step-circle-2"><span>2</span></div>
+                    <span class="step-name">Behavior</span>
+                </div>
+            </div>
+
+            <form method="post" class="screening-form" id="screening-form" novalidate>
+
+                <!-- ── Step 1 ───────────────────────────────────────── -->
+                <div class="form-step" id="step-1">
+                    <div class="step-header">
+                        <h2>Child Information</h2>
+                        <p class="step-desc">Provide basic demographic details for the child being screened.</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="Age_Mons">Age (months)</label>
+                            <input type="number" id="Age_Mons" name="Age_Mons"
+                                min="0" max="36" step="1" placeholder="e.g. 24"
+                                value="{{ form_data.Age_Mons if form_data else '' }}"
+                                aria-describedby="age-error" required>
+                            {% if errors and errors.get('Age_Mons') %}
+                                <p class="field-error" id="age-error" role="alert">{{ errors.get('Age_Mons') }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Sex">Sex at birth</label>
+                            <div class="select-wrapper">
+                                <select id="Sex" name="Sex" required>
+                                    <option value="m" {% if not form_data or form_data.get('Sex') == 'm' %}selected{% endif %}>Male</option>
+                                    <option value="f" {% if form_data and form_data.get('Sex') == 'f' %}selected{% endif %}>Female</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Ethnicity">Ethnicity</label>
+                            <div class="select-wrapper">
+                                <select id="Ethnicity" name="Ethnicity" required>
+                                    <option value="middle eastern" {% if form_data and form_data.get('Ethnicity') == 'middle eastern' %}selected{% endif %}>Middle Eastern</option>
+                                    <option value="White European" {% if not form_data or form_data.get('Ethnicity') == 'White European' %}selected{% endif %}>White European</option>
+                                    <option value="Hispanic" {% if form_data and form_data.get('Ethnicity') == 'Hispanic' %}selected{% endif %}>Hispanic</option>
+                                    <option value="black" {% if form_data and form_data.get('Ethnicity') == 'black' %}selected{% endif %}>Black</option>
+                                    <option value="asian" {% if form_data and form_data.get('Ethnicity') == 'asian' %}selected{% endif %}>Asian</option>
+                                    <option value="south asian" {% if form_data and form_data.get('Ethnicity') == 'south asian' %}selected{% endif %}>South Asian</option>
+                                    <option value="Native Indian" {% if form_data and form_data.get('Ethnicity') == 'Native Indian' %}selected{% endif %}>Native Indian</option>
+                                    <option value="Others" {% if form_data and form_data.get('Ethnicity') == 'Others' %}selected{% endif %}>Others / Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Jaundice">Jaundice at birth</label>
+                            <div class="select-wrapper">
+                                <select id="Jaundice" name="Jaundice" required>
+                                    <option value="no" {% if not form_data or form_data.get('Jaundice') == 'no' %}selected{% endif %}>No</option>
+                                    <option value="yes" {% if form_data and form_data.get('Jaundice') == 'yes' %}selected{% endif %}>Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="Family_mem_with_ASD">Family member diagnosed with ASD</label>
+                            <div class="select-wrapper">
+                                <select id="Family_mem_with_ASD" name="Family_mem_with_ASD" required>
+                                    <option value="no" {% if not form_data or form_data.get('Family_mem_with_ASD') == 'no' %}selected{% endif %}>No</option>
+                                    <option value="yes" {% if form_data and form_data.get('Family_mem_with_ASD') == 'yes' %}selected{% endif %}>Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"><span>Behavioral Questions — Part 1 of 2</span></div>
+                    <p class="section-hint">Select the response that best describes your child's <em>typical</em> behavior over the past few months.</p>
+
+                    <div class="questions-list">
+
+                        <div class="question-card">
+                            <div class="question-meta">
+                                <span class="q-number">Q1</span>
+                                <span class="q-domain">Joint Attention</span>
+                            </div>
+                            <label for="A1" class="question-text">Does your child look at you when you call his/her name?</label>
+                            <div class="select-wrapper">
+                                <select id="A1" name="A1" required>
+                                    <option value="1" {% if not form_data or form_data.get('A1') == '1' %}selected{% endif %}>Always</option>
+                                    <option value="0" {% if form_data and form_data.get('A1') == '0' %}selected{% endif %}>Usually</option>
+                                    <option value="0">Sometimes</option>
+                                    <option value="0">Rarely</option>
+                                    <option value="0">Never</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="question-card">
+                            <div class="question-meta">
+                                <span class="q-number">Q2</span>
+                                <span class="q-domain">Social Engagement</span>
+                            </div>
+                            <label for="A2" class="question-text">How easy is it for you to get eye contact with your child?</label>
+                            <div class="select-wrapper">
+                                <select id="A2" name="A2" required>
+                                    <option value="1" {% if not form_data or form_data.get('A2') == '1' %}selected{% endif %}>Always easy</option>
+                                    <option value="1">Usually easy</option>
+                                    <option value="0" {% if form_data and form_data.get('A2') == '0' %}selected{% endif %}>Sometimes easy</option>
+                                    <option value="0">Rarely easy</option>
+                                    <option value="0">Never easy</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="question-card">
+                            <div class="question-meta">
+                                <span class="q-number">Q3</span>
+                                <span class="q-domain">Communication</span>
+                            </div>
+                            <label for="A3" class="question-text">Does your child point to indicate that s/he wants something? (e.g., a toy that is out of reach)</label>
+                            <div class="select-wrapper">
+                                <select id="A3" name="A3" required>
+                                    <option value="1" {% if not form_data or form_data.get('A3') == '1' %}selected{% endif %}>Always</option>
+                                    <option value="0" {% if form_data and form_data.get('A3') == '0' %}selected{% endif %}>Usually</option>
+                                    <option value="0">Sometimes</option>
+                                    <option value="0">Rarely</option>
+                                    <option value="0">Never</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="question-card">
+                            <div class="question-meta">
+                                <span class="q-number">Q4</span>
+                                <span class="q-domain">Social Communication</span>
+                            </div>
+                            <label for="A4" class="question-text">Does your child point to share interest with you? (e.g., pointing at an interesting sight)</label>
+                            <div class="select-wrapper">
+                                <select id="A4" name="A4" required>
+                                    <option value="1" {% if not form_data or form_data.get('A4') == '1' %}selected{% endif %}>Always</option>
+                                    <option value="1">Usually</option>
+                                    <option value="0" {% if form_data and form_data.get('A4') == '0' %}selected{% endif %}>Sometimes</option>
+                                    <option value="0">Rarely</option>
+                                    <option value="0">Never</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="question-card">
+                            <div class="question-meta">
+                                <span class="q-number">Q5</span>
+                                <span class="q-domain">Imaginative Play</span>
+                            </div>
+                            <label for="A5" class="question-text">Does your child pretend? (e.g., care for dolls, talk on a toy phone)</label>
+                            <div class="select-wrapper">
+                                <select id="A5" name="A5" required>
+                                    <option value="1" {% if not form_data or form_data.get('A5') == '1' %}selected{% endif %}>Always</option>
+                                    <option value="0" {% if form_data and form_data.get('A5') == '0' %}selected{% endif %}>Usually</option>
+                                    <option value="0">Sometimes</option>
+                                    <option value="0">Rarely</option>
+                                    <option value="0">Never</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div><!-- /questions-list -->
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-primary btn-full" id="next-to-step-2">
+                            Continue to Part 2
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                    </div>
+                </div><!-- /step-1 -->
+
+                <!-- ── Step 2 ───────────────────────────────────────── -->
+                <div class="form-step" id="step-2" style="display:none;">
+                    <div class="step-header">
+                        <h2>Behavioral Questions — Part 2</h2>
+                        <p class="step-desc">Five more questions assessing additional developmental and social behaviors.</p>
+                    </div>
+
+                    <div class="questions-list">
+
+                        <div class="question-card">
+                            <div class="question-meta">
+                                <span class="q-number">Q6</span>
+                                <span class="q-domain">Joint Attention</span>
+                            </div>
+                            <label for="A6" class="question-text">Does your child follow where you're looking?</label>
+                            <div class="select-wrapper">
+                                <select id="A6" name="A6" required>
+                                    <option value="1" {% if not form_data or form_data.get('A6') == '1' %}selected{% endif %}>Always</option>
+                                    <option value="0" {% if form_data and form_data.get('A6') == '0' %}selected{% endif %}>Usually</option>
+                                    <option value="0">Sometimes</option>
+                                    <option value="0">Rarely</option>
+                                    <option value="0">Never</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="question-card">
+                            <div class="question-meta">
+                                <span class="q-number">Q7</span>
+                                <span class="q-domain">Empathy</span>
+                            </div>
+                            <label for="A7" class="question-text">If you or someone else in the family is visibly upset, does your child show signs of wanting to comfort them?</label>
+                            <div class="select-wrapper">
+                                <select id="A7" name="A7" required>
+                                    <option value="1" {% if not form_data or form_data.get('A7') == '1' %}selected{% endif %}>Always</option>
+                                    <option value="0" {% if form_data and form_data.get('A7') == '0' %}selected{% endif %}>Usually</option>
+                                    <option value="0">Sometimes</option>
+                                    <option value="0">Rarely</option>
+                                    <option value="0">Never</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="question-card">
+                            <div class="question-meta">
+                                <span class="q-number">Q8</span>
+                                <span class="q-domain">Language Development</span>
+                            </div>
+                            <label for="A8" class="question-text">Would you describe your child's first words as typical for their age?</label>
+                            <div class="select-wrapper">
+                                <select id="A8" name="A8" required>
+                                    <option value="1" {% if not form_data or form_data.get('A8') == '1' %}selected{% endif %}>Always typical</option>
+                                    <option value="0" {% if form_data and form_data.get('A8') == '0' %}selected{% endif %}>Usually typical</option>
+                                    <option value="0">Sometimes typical</option>
+                                    <option value="0">Rarely typical</option>
+                                    <option value="0">Never / no words yet</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="question-card">
+                            <div class="question-meta">
+                                <span class="q-number">Q9</span>
+                                <span class="q-domain">Non-verbal Communication</span>
+                            </div>
+                            <label for="A9" class="question-text">Does your child use simple gestures? (e.g., wave goodbye)</label>
+                            <div class="select-wrapper">
+                                <select id="A9" name="A9" required>
+                                    <option value="1" {% if not form_data or form_data.get('A9') == '1' %}selected{% endif %}>Always</option>
+                                    <option value="0" {% if form_data and form_data.get('A9') == '0' %}selected{% endif %}>Usually</option>
+                                    <option value="0">Sometimes</option>
+                                    <option value="0">Rarely</option>
+                                    <option value="0">Never</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="question-card">
+                            <div class="question-meta">
+                                <span class="q-number">Q10</span>
+                                <span class="q-domain">Attention Patterns</span>
+                            </div>
+                            <label for="A10" class="question-text">Does your child stare at nothing with no apparent purpose?</label>
+                            <div class="select-wrapper">
+                                <select id="A10" name="A10" required>
+                                    <option value="1" {% if not form_data or form_data.get('A10') == '1' %}selected{% endif %}>Always</option>
+                                    <option value="0" {% if form_data and form_data.get('A10') == '0' %}selected{% endif %}>Usually</option>
+                                    <option value="0">Sometimes</option>
+                                    <option value="0">Rarely</option>
+                                    <option value="0">Never</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div><!-- /questions-list -->
+
+                    <div class="step-actions step-actions-two">
+                        <button type="button" class="btn btn-ghost" id="back-to-step-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            Back
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submit-btn">
+                            <span class="btn-text">Run Screening</span>
+                            <span class="btn-loading" style="display:none;">
+                                <svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                Analyzing…
+                            </span>
+                        </button>
+                    </div>
+                </div><!-- /step-2 -->
+
+            </form>
+        </div><!-- /form-card -->
+
+        <!-- ── Result Card ────────────────────────────────────────────── -->
+        {% if result %}
+        {% set prob_pct = (probability * 100) | round(1) %}
+        {% if probability >= 0.9 %}
+            {% set risk       = 'High Indication' %}
+            {% set risk_class = 'risk-high' %}
+            {% set gauge_color = '#ef4444' %}
+            {% set gauge_track = 'rgba(239,68,68,0.15)' %}
+        {% elif probability <= 0.1 %}
+            {% set risk       = 'Low Indication' %}
+            {% set risk_class = 'risk-low' %}
+            {% set gauge_color = '#10b981' %}
+            {% set gauge_track = 'rgba(16,185,129,0.15)' %}
+        {% else %}
+            {% set risk       = 'Moderate Indication' %}
+            {% set risk_class = 'risk-moderate' %}
+            {% set gauge_color = '#f59e0b' %}
+            {% set gauge_track = 'rgba(245,158,11,0.15)' %}
+        {% endif %}
+        {% set circumference = 251.3 %}
+        {% set dash_offset   = (circumference * (1 - probability)) | round(2) %}
+
+        <div class="card result-card {{ risk_class }}" id="result-card">
+            <div class="result-header">
+
+                <!-- Animated probability gauge -->
+                <div class="gauge-wrapper" aria-label="Probability: {{ prob_pct }}%">
+                    <svg class="gauge-svg" viewBox="0 0 100 100" width="160" height="160">
+                        <!-- Track -->
+                        <circle cx="50" cy="50" r="40"
+                            fill="none" stroke="{{ gauge_track }}" stroke-width="8"/>
+                        <!-- Fill — animated via JS -->
+                        <circle class="gauge-fill" cx="50" cy="50" r="40"
+                            fill="none"
+                            stroke="{{ gauge_color }}" stroke-width="8"
+                            stroke-linecap="round"
+                            stroke-dasharray="{{ circumference }}"
+                            stroke-dashoffset="{{ circumference }}"
+                            data-target="{{ dash_offset }}"
+                            transform="rotate(-90 50 50)"/>
+                        <!-- Percentage text -->
+                        <text x="50" y="45" text-anchor="middle" dominant-baseline="middle"
+                            fill="{{ gauge_color }}" font-size="19" font-weight="700"
+                            font-family="Inter, sans-serif">{{ prob_pct }}%</text>
+                        <text x="50" y="60" text-anchor="middle" dominant-baseline="middle"
+                            fill="#64748b" font-size="6.5" font-family="Inter, sans-serif">ASD Trait Probability</text>
+                    </svg>
+                </div>
+
+                <!-- Summary text -->
+                <div class="result-summary">
+                    <span class="risk-badge {{ risk_class }}">{{ risk }}</span>
+                    <h2 class="result-title">{{ result }}</h2>
+                    <p class="result-explanation">{{ explanation }}</p>
+                </div>
+            </div><!-- /result-header -->
+
+            <!-- Action buttons -->
+            <div class="result-actions">
+                <button type="button" class="btn btn-ghost" onclick="window.print()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    Print Summary
+                </button>
+                <a href="/" class="btn btn-ghost">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.71"></path></svg>
+                    New Screening
+                </a>
+            </div>
+
+            <!-- About the Model (expandable) -->
+            <details class="about-model">
+                <summary>About the Model &amp; Evaluation Metrics</summary>
+                <div class="about-body">
+                    <p>
+                        This tool uses a <strong>logistic regression classifier</strong> trained on a published toddler
+                        ASD screening dataset (Q-CHAT-10, 2018). Features include 10 behavioral items plus age, sex,
+                        ethnicity, jaundice history, and family ASD history. The model was evaluated using stratified
+                        80/20 split and 5-fold cross-validation.
+                    </p>
+                    <div class="model-stats-grid">
+                        <div class="model-stat">
+                            <span class="ms-label">Algorithm</span>
+                            <span class="ms-value">Logistic Regression</span>
+                        </div>
+                        <div class="model-stat">
+                            <span class="ms-label">Training Set</span>
+                            <span class="ms-value">843 records (80%)</span>
+                        </div>
+                        <div class="model-stat">
+                            <span class="ms-label">Test Set</span>
+                            <span class="ms-value">211 records (20%)</span>
+                        </div>
+                        <div class="model-stat">
+                            <span class="ms-label">Features</span>
+                            <span class="ms-value">15 (behavioral + demographic)</span>
+                        </div>
+                        <div class="model-stat">
+                            <span class="ms-label">Validation</span>
+                            <span class="ms-value">5-fold cross-validation</span>
+                        </div>
+                        <div class="model-stat">
+                            <span class="ms-label">Accuracy</span>
+                            <span class="ms-value">99.7%</span>
+                        </div>
+                    </div>
+                    <div class="model-images">
+                        <figure>
+                            <img src="/model-image/confusion_matrix.png"
+                                alt="Confusion matrix showing model classification performance"
+                                loading="lazy"
+                                onerror="this.closest('figure').style.display='none'">
+                            <figcaption>Confusion Matrix</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="/model-image/roc_curve.png"
+                                alt="ROC curve showing classifier discriminative ability"
+                                loading="lazy"
+                                onerror="this.closest('figure').style.display='none'">
+                            <figcaption>ROC Curve</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Resources -->
+            <div class="resources">
+                <h3>Recommended Next Steps</h3>
+                <ul class="resources-list">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        <a href="https://www.cdc.gov/ncbddd/autism/signs.html" target="_blank" rel="noopener noreferrer">CDC — Signs and Symptoms of ASD</a>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        <a href="https://www.autismspeaks.org/what-autism" target="_blank" rel="noopener noreferrer">Autism Speaks — What is Autism?</a>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        <a href="https://www.who.int/news-room/fact-sheets/detail/autism-spectrum-disorders" target="_blank" rel="noopener noreferrer">WHO — Autism Spectrum Disorders Fact Sheet</a>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span>For immediate concerns, please contact your pediatrician or a local developmental clinic.</span>
+                    </li>
+                </ul>
+            </div>
+        </div><!-- /result-card -->
+        {% endif %}
+
+        <footer class="footer">
+            <p>Built by <strong>Michael Okafor</strong> &nbsp;·&nbsp; Logistic Regression on Q-CHAT-10 Dataset &nbsp;·&nbsp; For educational use only</p>
+        </footer>
+
+    </div><!-- /wrapper -->
 
     <script>
-        (function () {
-            var step1 = document.getElementById('step-1');
-            var step2 = document.getElementById('step-2');
-            var nextBtn = document.getElementById('next-to-step-2');
-            var backBtn = document.getElementById('back-to-step-1');
-            var progressFill = document.getElementById('progress-bar-fill');
-            var stepLabel1 = document.getElementById('step-label-1');
-            var stepLabel2 = document.getElementById('step-label-2');
+    (function () {
+        'use strict';
 
-            function goToStep(step) {
-                if (step === 1) {
-                    step1.style.display = '';
-                    step2.style.display = 'none';
-                    progressFill.style.width = '50%';
-                    stepLabel1.classList.add('active');
-                    stepLabel2.classList.remove('active');
-                } else {
-                    step1.style.display = 'none';
-                    step2.style.display = '';
-                    progressFill.style.width = '100%';
-                    stepLabel1.classList.remove('active');
-                    stepLabel2.classList.add('active');
+        /* ── Step navigation ──────────────────────────────────────── */
+        var step1      = document.getElementById('step-1');
+        var step2      = document.getElementById('step-2');
+        var nextBtn    = document.getElementById('next-to-step-2');
+        var backBtn    = document.getElementById('back-to-step-1');
+        var circle1    = document.getElementById('step-circle-1');
+        var circle2    = document.getElementById('step-circle-2');
+        var connector  = document.getElementById('step-connector');
+
+        function goToStep(n) {
+            if (n === 2) {
+                step1.style.display = 'none';
+                step2.style.display = '';
+                circle1.classList.remove('active');
+                circle1.classList.add('done');
+                circle1.querySelector('span').textContent = '✓';
+                circle2.classList.add('active');
+                connector.classList.add('done');
+            } else {
+                step1.style.display = '';
+                step2.style.display = 'none';
+                circle1.classList.add('active');
+                circle1.classList.remove('done');
+                circle1.querySelector('span').textContent = '1';
+                circle2.classList.remove('active');
+                connector.classList.remove('done');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        if (nextBtn) nextBtn.addEventListener('click', function () { goToStep(2); });
+        if (backBtn) backBtn.addEventListener('click', function () { goToStep(1); });
+
+        /* ── Submit loading state ─────────────────────────────────── */
+        var form      = document.getElementById('screening-form');
+        var submitBtn = document.getElementById('submit-btn');
+        if (form && submitBtn) {
+            form.addEventListener('submit', function () {
+                var btnText    = submitBtn.querySelector('.btn-text');
+                var btnLoading = submitBtn.querySelector('.btn-loading');
+                if (btnText)    btnText.style.display    = 'none';
+                if (btnLoading) btnLoading.style.display = 'inline-flex';
+                submitBtn.disabled = true;
+            });
+        }
+
+        /* ── Animate gauge on page load ───────────────────────────── */
+        var gaugeFill = document.querySelector('.gauge-fill');
+        if (gaugeFill) {
+            var target = parseFloat(gaugeFill.getAttribute('data-target'));
+            // Start from full offset (empty), then animate to target
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    gaugeFill.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    gaugeFill.setAttribute('stroke-dashoffset', target);
+                });
+            });
+
+            // Scroll result into view after a short delay
+            setTimeout(function () {
+                var resultCard = document.getElementById('result-card');
+                if (resultCard) {
+                    resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
-            }
-
-            if (nextBtn && backBtn) {
-                nextBtn.addEventListener('click', function () { goToStep(2); });
-                backBtn.addEventListener('click', function () { goToStep(1); });
-            }
-
-            // Initialize progress on load
-            goToStep(1);
-        })();
+            }, 200);
+        }
+    })();
     </script>
 </body>
 </html>

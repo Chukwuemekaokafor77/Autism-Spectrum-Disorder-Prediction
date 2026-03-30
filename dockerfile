@@ -10,11 +10,13 @@ COPY . /app
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 5000 available to the world outside this container
+# Train model artifacts at build time so startup is instant
+RUN python train.py
+
+# Render (and most cloud platforms) inject PORT at runtime
 EXPOSE 5000
-
-# Define environment variable
 ENV FLASK_APP=run.py
+ENV PORT=5000
 
-# Run the application with a production WSGI server
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "run:app"]
+# Shell form so $PORT is expanded at runtime
+CMD gunicorn -b 0.0.0.0:$PORT run:app
